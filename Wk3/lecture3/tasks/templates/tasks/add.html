@@ -1,0 +1,14 @@
+{% extends "tasks/layout.html" %}
+<!-- gets rid of boilerplate code -->
+
+{% block body %}
+        <h1>Add Task</h1>
+        <!-- submit it to url > request method is post. REmove cross site request forgery-->
+        <form action="{% url 'tasks:add' %}" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit">
+        </form>
+        <!-- from tasks app, get url route-->
+        <a href="{% url 'tasks:index' %}">View Tasks</a>
+{% endblock %}

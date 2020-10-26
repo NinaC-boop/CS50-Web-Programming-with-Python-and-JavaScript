@@ -1,0 +1,162 @@
+body {
+  font-size: small;
+  background: white;
+  color: #696969;
+  font-family: arial, sans-serif;
+  padding: 10px 20px 10px 20px;
+}
+
+#adv-search-but {
+  background-color: #4d90fe;
+  border: solid;
+  border-width: 1px;
+  color: white;
+  border-color: #3079ed;
+  font-size: small;
+  padding: 5px 10px 5px 10px;
+  font-weight: bold;
+}
+
+.light-text {
+  font-size: smaller;
+  color: #696969;
+}
+
+.search-field {
+  text-align: center;
+  padding: 200px;
+}
+.search-field p {
+  text-align: none;
+  color: #61a8ff;
+  position: relative;
+  right: -100px;
+  top: -40px;
+  height: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.search-box {
+  border-radius: 40px;
+  height: 40px;
+  width: 500px;
+  border-color: #d9d9d9;
+  color: #696969;
+  outline-width: 0;
+  box-sizing: border-box;
+  background-image: url("searchleft.png");
+  background-position: 10px 7px;
+  background-repeat: no-repeat;
+  padding: 20px 40px 20px 40px;
+  display: block;
+  margin: auto;
+}
+
+.index {
+  flex-direction: row-reverse;
+}
+
+img {
+  padding: 20px;
+}
+
+input[type=submit], input[type=button] {
+  padding: 10px;
+  margin: 20px 5px 20px 5px;
+  border: 0px;
+  background-color: #f0f0f0;
+  color: #696969;
+  font-size: larger;
+}
+
+.example-font {
+  font-family: "Roboto Mono", monospace;
+}
+
+.navigation-bar,
+.footer {
+  display: flex;
+  justify-content: space-between;
+}
+.navigation-bar img,
+.footer img {
+  position: relative;
+  top: -20px;
+  width: 100px;
+  left: -20px;
+}
+
+h2 {
+  color: #c90000;
+  font-weight: 100;
+  font-size: 1.5em;
+}
+
+h3 {
+  font-weight: 200;
+  font-size: 1.17em;
+}
+
+h4 {
+  font-size: 1em;
+}
+
+h5 {
+  font-size: 0.83em;
+}
+
+h6 {
+  font-size: 0.67em;
+}
+
+.container {
+  padding: 20px;
+  color: black;
+  border-top: 1px solid #d1d1d1;
+  width: 2000px;
+}
+
+.row {
+  padding: 0 0 10px 0;
+  height: 3.5em;
+}
+
+.forms {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.adv-form {
+  width: 100%;
+}
+
+.hyperlinks {
+  color: #0000EE;
+  padding: 0;
+}
+
+a, p {
+  text-decoration: none;
+  padding: 0px 5px 0px 5px;
+  color: #696969;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.footer {
+  background-color: #f0f0f0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  left: 0px;
+  border-top: 1px solid #d1d1d1;
+}
+.footer div {
+  padding: 0px 10px 0px 10px;
+  margin: 10px;
+}
+
+/*# sourceMappingURL=styles.css.map */

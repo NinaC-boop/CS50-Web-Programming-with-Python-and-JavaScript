@@ -1,0 +1,32 @@
+$color: coral;
+
+%message {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    padding: 20px;
+    margin: 20px;
+    font-weight: bold;
+}
+
+li {
+    @extend %message;
+    background-color: yellowgreen;
+}
+
+ul {
+    font-size: 14px;
+    color: $color;
+
+    li {
+        text-align: center;
+    }
+}
+
+ol {
+    font-size: 20px;
+    color: $color;
+}
+
+/* 
+sass variables.scss:variables.css
+sass --watch variables.scss:variables.css
+*/

@@ -1,0 +1,15 @@
+{% extends "tasks/layout.html" %}
+<!-- inherits from tasks/layout -->
+
+{% block body %}
+        <h1>Tasks</h1>
+        <ul>
+            {% for task in tasks %}
+                <li>{{ task }}</li>
+            {% empty %} <!-- for loop empty condition -->
+                <li>No tasks.</li>
+            {% endfor %}
+        </ul>
+        <!-- link to url called add in urlpatterns; have to refresh page -->
+        <a href="{% url 'tasks:add' %}">Add a New Task</a>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Page Already Exists
+{% endblock %}
+
+{% block body %}
+    <h1>Error 101</h1>
+    Page already exists at <a href="{% url 'wiki:page' title %}">{{ title }}</a>.
+
+{% endblock %}
