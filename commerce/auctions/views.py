@@ -6,10 +6,31 @@ from django.urls import reverse
 from json import dumps
 from datetime import datetime
 
-from .models import User, Bid, Listing, Comment#, Watchlist
+from .models import User, Bid, Listing, Comment, Watchlist
+
+def is_watched(l, u):
+    if not u.is_authenticated:
+        return False
+    if list(Watchlist.objects.filter(listing=l, user=u)) == []:
+        return False
+    return True
 
 def add_watchlist(request):
-    pass
+    if request.method == "POST":
+        listing_id = request.POST["listing_id"]
+        l = Listing.objects.get(pk=listing_id)
+        u = request.user
+        if not is_watched(l, u):
+            w = Watchlist(
+                user = u,
+                listing = l,
+            )
+            w.save()
+            print("added to watchlist")
+        else:
+            Watchlist.objects.filter(listing=l, user=u).delete()
+            print("deleted from watchlist")
+        return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
 
 def make_bid(request):
     pass
@@ -20,18 +41,23 @@ def listing(request, listing_id):
 
     if (l.is_active == False):
         return HttpResponseRedirect(reverse("index"))
+    info = listing_to_info_dict(l)
 
-    info = listing_to_dict(l)
+    if is_watched(l, request.user):
+        watchlist_value = "Remove from Watchlist"
+    else:
+        watchlist_value = "Add to Watchlist"
 
     # note to self: cannot change the url here
     return render(request, "auctions/listing.html", {
-        'listing': info
+        'listing': info,
+        'watched': watchlist_value,
     })
 
 def create_listing(request):
     return render(request, "auctions/create_listing.html")
 
-def listing_to_dict(l):
+def listing_to_info_dict(l):
     info = {
         'title': l.title,
         'description': l.description,
@@ -60,7 +86,7 @@ def index(request):
         if (l.is_active == False):
             continue
 
-        info = listing_to_dict(l)
+        info = listing_to_info_dict(l)
         print(info)
         print("\n\n\n")
 

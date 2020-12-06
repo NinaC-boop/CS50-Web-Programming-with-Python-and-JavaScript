@@ -60,11 +60,9 @@ class Bid(models.Model):
     def __str__(self):
         return f"[{self.timestamp}]: {self.user} bidding at ${self.price} for {self.listing}"
 
-'''
-class Watchlist(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_watchlist",  blank=True, null=True)
-    listings = models.ManyToManyField(Listing, blank=True, related_name="watchlists")
+class Watchlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_watchlist",  blank=True)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="listing_watchlist",  blank=True)
     def __str__(self):
-        return f"{self.user}'s Listing\n{self.listings}"
-'''
+        return f"{self.user} is watching {self.listing}"
