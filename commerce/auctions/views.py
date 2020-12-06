@@ -8,34 +8,62 @@ from datetime import datetime
 
 from .models import User, Bid, Listing, Comment#, Watchlist
 
+def add_watchlist(request):
+    pass
+
+def make_bid(request):
+    pass
+
+# html variables are included here in request
+def listing(request, listing_id):
+    l = Listing.objects.get(pk=listing_id)
+
+    if (l.is_active == False):
+        return HttpResponseRedirect(reverse("index"))
+
+    info = listing_to_dict(l)
+
+    # note to self: cannot change the url here
+    return render(request, "auctions/listing.html", {
+        'listing': info
+    })
+
 def create_listing(request):
     return render(request, "auctions/create_listing.html")
+
+def listing_to_dict(l):
+    info = {
+        'title': l.title,
+        'description': l.description,
+        'image_url': l.image_url,
+        'category': l.category,
+        'bids': [],
+        'id': l.id,
+    }
+
+    bids = Bid.objects.filter(listing=l)
+
+    for b in bids:
+        info['bids'].append({
+            'timestamp': b.timestamp.strftime("%m/%d/%Y %H:%M:%S"),
+            'price': "$" + str(b.price),
+            'user': b.user.username
+        })
+
+    info['starting_bid'] = info['bids'][0]
+    info['current_bid'] = info['bids'][-1]
+    return info
 
 def index(request):
     all_listings = []
     for l in Listing.objects.all():
         if (l.is_active == False):
             continue
-        info = {
-            'title': l.title,
-            'description': l.description,
-            'image_url': l.image_url,
-            'category': l.category,
-            'bids': [],
-        }
-        bids = Bid.objects.filter(listing=l)
-        if bids:
-            for b in bids:
-                info['bids'].append({
-                    'timestamp': b.timestamp.strftime("%m/%d/%Y %H:%M:%S"),
-                    'price': "$" + str(b.price),
-                    'user': b.user.username
-                })
-        info['starting_bid'] = info['bids'][0]
-        info['current_bid'] = info['bids'][-1]
 
+        info = listing_to_dict(l)
         print(info)
         print("\n\n\n")
+
         all_listings.append(info)
 
     return render(request, "auctions/index.html", {
@@ -73,21 +101,21 @@ def create(request):
             else:
                 img = "https://www.actbus.net/fleetwiki/images/8/84/Noimage.jpg"
 
-            listing = Listing(
+            l = Listing(
                 title = request.POST["title"],
                 description = request.POST['description'],
                 image_url = img,
                 category = request.POST["category"],
                 is_active = 1,
             )
-            
-            listing.valid()
-            listing.save()
-            print(listing)
+
+            l.valid()
+            l.save()
+            print(l)
             bid = Bid(
                 price = float(request.POST["starting_bid"]), 
                 user = request.user,
-                listing = listing,
+                listing = l,
             )
             bid.save()
             print(bid)

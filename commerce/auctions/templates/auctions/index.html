@@ -9,7 +9,8 @@
 
     {% for listing in listings %}
         <div class="container">
-            <h2>{{ listing.title }}</h2>
+            <!-- link to view listing -->
+            <a href="{% url 'listing' listing.id %}"><h2>{{ listing.title }}</h2></a>
             <p><em>{{ listing.category }}</em></p>
 
             <!-- Stack the columns on mobile by making one full-width and the other half-width -->
@@ -26,11 +27,7 @@
                 </div>
             </div>
 
-
-            <h2>Bids</h2>
-            {% for bid in listing.bids %}
-                <p>[{{ bid.timestamp }}]: {{ bid.price }} by {{ bid.user }}</p>
-            {% endfor %}
+            <br>
         </div>
     {% empty %}
         No listings
