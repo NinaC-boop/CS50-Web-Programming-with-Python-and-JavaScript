@@ -5,8 +5,7 @@
 
 
     {% for listing in listings %}
-        <li>{{ listing }}</li>
-        <li>{{ all_bids }}</li>
+        <li>{{ listing['title'] }}</li>
     {% empty %}
         <li> No listings </li>
     {% endfor %}

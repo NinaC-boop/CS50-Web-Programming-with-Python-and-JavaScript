@@ -3,6 +3,8 @@ from django.db import IntegrityError, models
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from json import dumps
+from datetime import datetime
 
 from .models import User, Bid, Listing, Comment#, Watchlist
 
@@ -10,11 +12,32 @@ def create_listing(request):
     return render(request, "auctions/create_listing.html")
 
 def index(request):
-    print(list(Bid.objects.all()))
-    print(list(Bid.objects.all()))
+    all_listings = []
+    for l in Listing.objects.all():
+        if (l.is_active == False):
+            continue
+        info = {
+            'title': l.title,
+            'description': l.description,
+            'image_url': l.image_url,
+            'category': l.category,
+            'bids': [],
+        }
+        bids = Bid.objects.filter(listing=l)
+        if bids:
+            for b in bids:
+                info['bids'].append({
+                    'timestamp': b.timestamp.strftime("%m/%d/%Y %H:%M:%S"),
+                    'price': "$" + str(b.price),
+                    'user': b.user.username
+                })
+
+        print(info)
+        print("\n\n\n")
+        all_listings.append(info)
+
     return render(request, "auctions/index.html", {
-        "listings": Listing.objects.all(),
-        "all_bids": Bid.objects.all(),
+        "listings": all_listings
     })
 
 def login_view(request):
