@@ -1,13 +1,39 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
+    <div class="container">
+        <h2>Active Listings</h2>
+    </div>
+    
 
 
     {% for listing in listings %}
-        <li>{{ listing['title'] }}</li>
+        <div class="container">
+            <h2>{{ listing.title }}</h2>
+            <p><em>{{ listing.category }}</em></p>
+
+            <!-- Stack the columns on mobile by making one full-width and the other half-width -->
+            <div class="row">
+                <div class="col-6 col-md-4">
+                    <img src="{{ listing.image_url }}" width="100%">
+                </div>
+                <div class="col-12 col-md-8">
+                    <p>{{ listing.description }}</p>
+
+                    <p><strong>Starting bid</strong> [{{ listing.starting_bid.timestamp }}]: {{ listing.starting_bid.price }} by {{ listing.starting_bid.user }}</p>
+
+                    <p><strong>Current bid</strong> [{{ listing.current_bid.timestamp }}]: {{ listing.current_bid.price }} by {{ listing.current_bid.user }}</p>
+                </div>
+            </div>
+
+
+            <h2>Bids</h2>
+            {% for bid in listing.bids %}
+                <p>[{{ bid.timestamp }}]: {{ bid.price }} by {{ bid.user }}</p>
+            {% endfor %}
+        </div>
     {% empty %}
-        <li> No listings </li>
+        No listings
     {% endfor %}
     
 {% endblock %}

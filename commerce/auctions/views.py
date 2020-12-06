@@ -31,6 +31,8 @@ def index(request):
                     'price': "$" + str(b.price),
                     'user': b.user.username
                 })
+        info['starting_bid'] = info['bids'][0]
+        info['current_bid'] = info['bids'][-1]
 
         print(info)
         print("\n\n\n")
@@ -66,13 +68,19 @@ def logout_view(request):
 def create(request):
     if request.method == "POST":
         try:
+            if request.POST["image_url"] != "":
+                img = request.POST["image_url"]
+            else:
+                img = "https://www.actbus.net/fleetwiki/images/8/84/Noimage.jpg"
+
             listing = Listing(
                 title = request.POST["title"],
                 description = request.POST['description'],
-                image_url = request.POST["image_url"],
+                image_url = img,
                 category = request.POST["category"],
                 is_active = 1,
             )
+            
             listing.valid()
             listing.save()
             print(listing)
@@ -89,7 +97,7 @@ def create(request):
             return HttpResponseRedirect(reverse("index"))
         except:
             return render(request, "auctions/create_listing.html", {
-                'message': "Please fill out all fields in the correct format",
+                'message': "Please fill out all fields in the correct format.",
             })
 
 def register(request):
