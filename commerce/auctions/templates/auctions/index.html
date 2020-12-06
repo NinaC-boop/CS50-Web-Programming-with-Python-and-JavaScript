@@ -3,8 +3,10 @@
 {% block body %}
     <h2>Active Listings</h2>
 
+
     {% for listing in listings %}
         <li>{{ listing }}</li>
+        <li>{{ all_bids }}</li>
     {% empty %}
         <li> No listings </li>
     {% endfor %}
