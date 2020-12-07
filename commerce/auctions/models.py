@@ -67,3 +67,9 @@ class Watchlist(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="listing_watchlist",  blank=True)
     def __str__(self):
         return f"{self.user} is watching {self.listing}"
+
+# class Category(models.Model):
+#     category = models.CharField(max_length=64, blank=True, null=True)
+#     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="category_listing", blank=True, null=True)
+#     def __str__(self):
+#         return f"{self.listing} in category {self.category}"

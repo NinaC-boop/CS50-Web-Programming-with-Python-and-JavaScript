@@ -9,6 +9,29 @@ from datetime import datetime
 
 from .models import User, Bid, Listing, Comment, Watchlist
 
+def category(request):
+    ctgs = []
+    category_listings = []
+    for l in Listing.objects.all():
+        if l.category != "" and l.category not in ctgs:
+            ctgs.append(l.category)
+
+            # all the listings in the same category
+            listings = []
+            for filtered_l in Listing.objects.filter(category=l.category):
+                if filtered_l.is_active:
+                    listings.append(listing_to_info_dict(filtered_l))
+
+            if listings != []:
+                category_listings.append({
+                    'category': l.category,
+                    'listings': listings,
+                })
+                
+    return render(request, "auctions/category.html", {
+        'category_listings': category_listings,
+    })
+
 def add_comment(request):
     if request.method == "POST":
         try:
@@ -217,7 +240,12 @@ def create(request):
             bid.save()
             print(bid)
 
-
+            # ctg = Category(
+            #     category = request.POST["category"],
+            #     listing = l
+            # )
+            # ctg.save()
+            # print(ctg)
 
             return HttpResponseRedirect(reverse("index"))
         except:
