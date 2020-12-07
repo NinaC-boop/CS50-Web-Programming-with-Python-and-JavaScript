@@ -2,7 +2,14 @@
 
 {% block body %}
     <div class="container">
-        <h2>THIS AUCTION HAS CLOSED</h2>
+        <div class="alert alert-success" role="alert">
+            {% if has_winner %}
+                <strong>Congratulations, </strong>{{ listing.current_bid.user }} has won the auction for {{ listing.current_bid.price }}!
+            {% else %}
+                This auction has been closed with no winners.
+            {% endif %}
+        </div>
+        
         <h2>{{ listing.title }} {% if watched %}<img src="https://cdn.pixabay.com/photo/2017/09/23/16/33/pixel-heart-2779422_1280.png" height="28em">{% endif %}</h2>
         <p><em>{{ listing.category }}</em></p>
 
@@ -21,43 +28,19 @@
         </div>
 
         <br>
+
         <div class="row justify-content-center">
-            {% if user.is_authenticated %}
-                <div class="col-12 col-md-3">
-                    <form action="{% url 'add_watchlist'%}" method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="listing_id" value="{{ listing.id }}">
-                        {% if watched %}
-                            <input type="submit" value="Remove from Watchlist">
-                        {% else %}
-                            <input type="submit" value="Add to Watchlist">
-                        {% endif %}
-                    </form>                
-                </div>
-
-                {% if is_owner %}
-                    <div class="col-12 col-md-3">
-                        <form action="{% url 'close_auction'%}" method="POST">
-                            {% csrf_token %}
-                            <input type="hidden" name="listing_id" value="{{ listing.id }}">
-                            <input type="submit" value="Close the Auction">
-                        </form>
-                    </div>
+            <div class="col-12">
+                <h2>Comments</h2>
+                {% if listing.comments %}
+                    {% for comment in listing.comments %}
+                        <p>[{{ comment.timestamp }}] {{ comment.user }}: {{ comment.message }}</p>
+                    {% endfor %}
                 {% else %}
-                    <div class="col-12 col-md-3">
-                        <form action="{% url 'make_bid'%}" method="POST">
-                            {% csrf_token %}
-                            <input type="hidden" name="listing_id" value="{{ listing.id }}">
-                            <label for="new_bid">$</label>
-                            <input type="number" id="new_bid" name="new_bid" min="0" step=".01">
-                            <input type="submit" value="Bid">
-                        </form>
-                    </div>
+                    <p>No comments.</p>
                 {% endif %}
-            {% endif %}
+            </div>
         </div>
-
-        <br>
 
         <div class="row justify-content-center">
             <div class="col-12 col-md-3">

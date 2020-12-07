@@ -59,9 +59,10 @@ def close_auction(request):
         info = listing_to_info_dict(l)
 
         return render(request, "auctions/closed_listing.html", {
-        'listing': info,
-        'watched': is_watched(l, request.user),
-        'is_owner': info['bids'][0]['user'] == request.user.username,
+            'listing': info,
+            'watched': is_watched(l, request.user),
+            'is_owner': info['bids'][0]['user'] == request.user.username,
+            'has_winner': info['starting_bid'] != info['current_bid'],
         })
 
 def is_watched(l, u):
