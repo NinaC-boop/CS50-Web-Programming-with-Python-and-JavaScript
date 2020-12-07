@@ -1,0 +1,44 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <div class="container">
+        <h2>Categories</h2>
+    </div>
+
+    {% for category in category_listings %}
+        <div class="container">
+            <a href="{% url 'category' category.category %}"><h2 class="text-body">{{ category.category }}</h2></a>
+            
+
+            {% for listing in category.listings %}
+                <!-- Stack the columns on mobile by making one full-width and the other half-width -->
+                <a href="{% url 'listing' listing.id %}"><h2>{{ listing.title }}</h2></a>
+                <div class="row">
+                    <div class="col-6 col-md-4">
+                        <img src="{{ listing.image_url }}" width="100%">
+                    </div>
+                    <div class="col-12 col-md-8">
+                        <p>{{ listing.description }}</p>
+
+                        <p><strong>Starting bid</strong> [{{ listing.starting_bid.timestamp }}]: {{ listing.starting_bid.price }} by {{ listing.starting_bid.user }}</p>
+
+                        <p><strong>Current bid</strong> [{{ listing.current_bid.timestamp }}]: {{ listing.current_bid.price }} by {{ listing.current_bid.user }}</p>
+                    </div>
+                </div>
+
+                <br>
+            {% empty %}
+                
+                <div class="row">
+                    <div class="col-12">
+                        <p>No listings</p>
+                    </div>
+                </div>
+            {% endfor %}
+
+
+            <br>
+        </div>
+    {% endfor %}
+    
+{% endblock %}

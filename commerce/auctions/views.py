@@ -9,7 +9,31 @@ from datetime import datetime
 
 from .models import User, Bid, Listing, Comment, Watchlist
 
-def category(request):
+def category(request, ctg):
+    listings = []
+    for l in Listing.objects.filter(category=ctg):
+        if l.is_active:
+            listings.append(listing_to_info_dict(l))
+    return render(request, "auctions/category.html", {
+        'category': ctg,
+        'listings': listings,
+    })
+
+def watchlist(request):
+    all_listings = []
+    ws = Watchlist.objects.filter(user=request.user)
+    for w in ws:
+        l = w.listing
+        if l.is_active:
+            info = listing_to_info_dict(l)
+            all_listings.append(info)
+
+    return render(request, "auctions/watchlist.html", {
+        'watchlist': [],
+        'listings': all_listings,
+    })
+
+def categories(request):
     ctgs = []
     category_listings = []
     for l in Listing.objects.all():
@@ -28,7 +52,7 @@ def category(request):
                     'listings': listings,
                 })
                 
-    return render(request, "auctions/category.html", {
+    return render(request, "auctions/categories.html", {
         'category_listings': category_listings,
     })
 
@@ -83,10 +107,8 @@ def add_watchlist(request):
                 listing = l,
             )
             w.save()
-            print("added to watchlist")
         else:
             Watchlist.objects.filter(listing=l, user=u).delete()
-            print("deleted from watchlist")
         return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
 
 def make_bid(request):
@@ -115,7 +137,6 @@ def make_bid(request):
         )
         bid.save()
 
-        print(bid)
         return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
 
 # html variables are included here in request
@@ -161,7 +182,6 @@ def listing_to_info_dict(l):
         })
 
     comments = Comment.objects.filter(listing=l)
-    print(comments)
 
     for c in comments:
         info['comments'].append({
@@ -182,9 +202,6 @@ def index(request):
             continue
 
         info = listing_to_info_dict(l)
-        print(info)
-        print("\n\n\n")
-
         all_listings.append(info)
 
     return render(request, "auctions/index.html", {
@@ -232,21 +249,12 @@ def create(request):
 
             l.valid()
             l.save()
-            print(l)
             bid = Bid(
                 price = float(request.POST["starting_bid"]), 
                 user = request.user,
                 listing = l,
             )
             bid.save()
-            print(bid)
-
-            # ctg = Category(
-            #     category = request.POST["category"],
-            #     listing = l
-            # )
-            # ctg.save()
-            # print(ctg)
 
             return HttpResponseRedirect(reverse("index"))
         except:

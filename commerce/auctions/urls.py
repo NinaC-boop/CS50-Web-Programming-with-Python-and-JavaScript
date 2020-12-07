@@ -15,5 +15,9 @@ urlpatterns = [
     path("make_bid", views.make_bid, name="make_bid"),
     path("closed_listing", views.close_auction, name="close_auction"),
     path("add_comment", views.add_comment, name="add_comment"),
-    path("category", views.category, name="category"),
+    path("categories", views.categories, name="categories"),
+    path("watchlist", views.watchlist, name="watchlist"),
+    path("category/<str:ctg>", views.category, name="category"),
 ]
+
+# change paths for unused views?

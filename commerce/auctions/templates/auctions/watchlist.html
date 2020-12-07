@@ -2,7 +2,7 @@
 
 {% block body %}
     <div class="container">
-        <h2>Active Listings</h2>
+        <h2>Watchlist <img src="https://cdn.pixabay.com/photo/2017/09/23/16/33/pixel-heart-2779422_1280.png" height="28em"></h2>
     </div>
     
 
@@ -34,7 +34,9 @@
             <br>
         </div>
     {% empty %}
-        No listings
+    <div class="container">
+        You are not watching any items.
+    </div>
     {% endfor %}
     
 {% endblock %}
