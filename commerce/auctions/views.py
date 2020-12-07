@@ -9,6 +9,23 @@ from datetime import datetime
 
 from .models import User, Bid, Listing, Comment, Watchlist
 
+def add_comment(request):
+    pass
+
+def close_auction(request):
+    if request.method == "POST":
+        listing_id = request.POST["listing_id"]
+        l = Listing.objects.get(pk=listing_id)
+        l.is_active = False
+        l.save()
+        info = listing_to_info_dict(l)
+
+        return render(request, "auctions/closed_listing.html", {
+        'listing': info,
+        'watched': is_watched(l, request.user),
+        'is_owner': info['bids'][0]['user'] == request.user.username,
+        })
+
 def is_watched(l, u):
     if not u.is_authenticated:
         return False
@@ -65,10 +82,14 @@ def make_bid(request):
 # html variables are included here in request
 def listing(request, listing_id):
     l = Listing.objects.get(pk=listing_id)
+    info = listing_to_info_dict(l)
 
     if (l.is_active == False):
-        return HttpResponseRedirect(reverse("index"))
-    info = listing_to_info_dict(l)
+        return render(request, "auctions/closed_listing.html", {
+        'listing': info,
+        'watched': is_watched(l, request.user),
+        'is_owner': info['bids'][0]['user'] == request.user.username,
+        })
 
     # note to self: cannot change the url here
     return render(request, "auctions/listing.html", {
