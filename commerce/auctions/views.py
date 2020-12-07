@@ -10,7 +10,22 @@ from datetime import datetime
 from .models import User, Bid, Listing, Comment, Watchlist
 
 def add_comment(request):
-    pass
+    if request.method == "POST":
+        try:
+            listing_id = request.POST["listing_id"]
+
+            u = User.objects.get(username=request.POST["user"])
+            c = Comment(
+                comment = request.POST["new_comment"],
+                user = u,
+                listing = Listing.objects.get(pk=listing_id),
+            )
+            c.valid()
+            c.save()
+
+            return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
+        except:
+            return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
 
 def close_auction(request):
     if request.method == "POST":
@@ -108,6 +123,7 @@ def listing_to_info_dict(l):
         'image_url': l.image_url,
         'category': l.category,
         'bids': [],
+        'comments': [],
         'id': l.id,
     }
 
@@ -119,6 +135,17 @@ def listing_to_info_dict(l):
             'price': "$" + str(b.price),
             'user': b.user.username
         })
+
+    comments = Comment.objects.filter(listing=l)
+    print(comments)
+
+    for c in comments:
+        info['comments'].append({
+            'timestamp': c.timestamp.strftime("%m/%d/%Y %H:%M:%S"),
+            'message': c.comment,
+            'user': c.user.username,
+        })
+
 
     info['starting_bid'] = info['bids'][0]
     info['current_bid'] = info['bids'][-1]

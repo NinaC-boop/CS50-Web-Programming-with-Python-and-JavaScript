@@ -30,6 +30,7 @@ class Comment(models.Model):
 
     comment = models.CharField(max_length=1000,)
     timestamp = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_comment",  blank=True)
     # foreign key for many to one relationship where class is the many
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments_listing", blank=True, null=True)
 
