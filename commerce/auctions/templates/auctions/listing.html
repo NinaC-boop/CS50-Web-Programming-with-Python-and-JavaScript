@@ -2,7 +2,7 @@
 
 {% block body %}
     <div class="container">
-        <h2>{{ listing.title }}</h2>
+        <h2>{{ listing.title }} {% if watched %}<img src="https://cdn.pixabay.com/photo/2017/09/23/16/33/pixel-heart-2779422_1280.png" height="28em">{% endif %}</h2>
         <p><em>{{ listing.category }}</em></p>
 
         <!-- Stack the columns on mobile by making one full-width and the other half-width -->
@@ -19,14 +19,51 @@
             </div>
         </div>
 
-        <div class="row justify-content-end">
-            <div class="col-12 col-md-4">
-                {% if user.is_authenticated %}
+        <br>
+        <div class="row justify-content-center">
+            {% if user.is_authenticated %}
+                <div class="col-12 col-md-3">
                     <form action="{% url 'add_watchlist'%}" method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="listing_id" value="{{ listing.id }}">
-                        <input type="submit" value="{{ watched }}">
-                    </form>
+                        {% if watched %}
+                            <input type="submit" value="Remove from Watchlist">
+                        {% else %}
+                            <input type="submit" value="Add to Watchlist">
+                        {% endif %}
+                    </form>                
+                </div>
+
+                {% if is_owner %}
+                    <div class="col-12 col-md-3">
+                        <form action="{% url 'make_bid'%}" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                            <input type="submit" value="Close the Auction">
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="col-12 col-md-3">
+                        <form action="{% url 'make_bid'%}" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                            <label for="new_bid">$</label>
+                            <input type="number" id="new_bid" name="new_bid" min="0" step=".01">
+                            <input type="submit" value="Bid">
+                        </form>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <br>
+
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-3">
+                {% if messages %}
+                    {% for message in messages %}
+                        <p class="{{ message.tags }} alert alert-warning" role="alert"><strong>{{ message }}</strong></p>
+                    {% endfor %}
                 {% endif %}
             </div>
         </div>
@@ -35,7 +72,7 @@
 
         <div class="row">
             <div class="col-12 col-md-8">
-                <h2>Bids</h2>
+                <h2>Bid History</h2>
                 {% for bid in listing.bids %}
                     <p>[{{ bid.timestamp }}]: {{ bid.price }} by {{ bid.user }}</p>
                 {% endfor %}

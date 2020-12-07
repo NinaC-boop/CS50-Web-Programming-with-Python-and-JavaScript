@@ -3,6 +3,7 @@ from django.db import IntegrityError, models
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib import messages
 from json import dumps
 from datetime import datetime
 
@@ -33,7 +34,33 @@ def add_watchlist(request):
         return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
 
 def make_bid(request):
-    pass
+    if request.method == "POST":
+        listing_id = request.POST["listing_id"]
+
+        if request.POST["new_bid"] == "":
+            messages.add_message(request, messages.ERROR, "Please enter a valid bid.")
+            return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
+        new_bid = round(float(request.POST["new_bid"]), 2)
+
+        
+        l = Listing.objects.get(pk=listing_id)
+        info = listing_to_info_dict(l)
+
+        # bid is not at least as large as the starting bid
+        # bid is not greater than any other bid
+        if (info['current_bid']['price'] == info['starting_bid']['price'] and new_bid < float(info['starting_bid']['price'][1:])) or (info['current_bid']['price'] != info['starting_bid']['price'] and new_bid <= float(info['current_bid']['price'][1:])):
+            messages.add_message(request, messages.ERROR, "Please enter a valid bid.")
+            return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
+        
+        bid = Bid(
+            price = new_bid,
+            user = request.user,
+            listing = l,
+        )
+        bid.save()
+
+        print(bid)
+        return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
 
 # html variables are included here in request
 def listing(request, listing_id):
@@ -43,15 +70,11 @@ def listing(request, listing_id):
         return HttpResponseRedirect(reverse("index"))
     info = listing_to_info_dict(l)
 
-    if is_watched(l, request.user):
-        watchlist_value = "Remove from Watchlist"
-    else:
-        watchlist_value = "Add to Watchlist"
-
     # note to self: cannot change the url here
     return render(request, "auctions/listing.html", {
         'listing': info,
-        'watched': watchlist_value,
+        'watched': is_watched(l, request.user),
+        'is_owner': info['bids'][0]['user'] == request.user.username,
     })
 
 def create_listing(request):
