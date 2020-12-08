@@ -19,5 +19,3 @@ urlpatterns = [
     path("watchlist", views.watchlist, name="watchlist"),
     path("category/<str:ctg>", views.category, name="category"),
 ]
-
-# change paths for unused views?
