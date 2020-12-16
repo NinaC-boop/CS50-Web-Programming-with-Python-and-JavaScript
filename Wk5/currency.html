@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <title>Currency Exchange</title>
+        <script>
+            // ajax is asynchronous javascript if we want additionall, it requests more data when u want after loaded
+            document.addEventListener('DOMContentLoaded', function() {
+
+                document.querySelector('form').onsubmit = function() {
+                    fetch('https://api.exchangeratesapi.io/latest?base=USD')
+                    .then(response => response.json())
+                    .then(data => {
+                        const currency = document.querySelector('#currency').value.toUpperCase();
+                        console.log(data);
+                        const rate = data.rates[currency]; // undefined if value doesn't exist when keyed
+                        if (rate !== undefined) {
+                            document.querySelector('#result').innerHTML = `1 USD is equal to ${rate.toFixed(3)} ${currency}`;
+                        } else {
+                            document.querySelector('#result').innerHTML = "Invalid currency."
+                        }
+                    }) // don't put semicolon after non-functions
+                    .catch(error => {
+                        console.log('Error:', error);
+                    }) // if API changes and something goes wrong
+
+                    return false;
+                    //promise, somethings coming back but it wont come back immediately. javascript "promise"
+                    // web request with response
+                    // read api documnetiaont to know how it works
+                }
+            });
+        </script>
+    </head>
+    <body>
+        <form>
+            <input id="currency" placeholder="Currency" type="text">
+            <input type="submit" value="Convert">
+        </form> 
+        <div id="result">
+
+        </div>
+            
+    </body>
+</html>
+

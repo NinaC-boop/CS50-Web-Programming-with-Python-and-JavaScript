@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <title>Hello</title>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // select not option because you get first element and results
+                document.querySelector('select').onchange = function() {
+                    document.querySelector("#hello").style.color = this.value;
+                    // whatever received the event is this. in JavaScript
+                }
+                // onmouseover onkeyup/down many more events search up
+            });
+        </script>
+    </head>
+    <body>
+        <h1 id="hello"> Hello!</h1>
+        <select>
+            <!--  valuye what they get but text is within option -->
+            <option value="black">Black</option>
+            <option value="red">Red</option>
+            <option value="blue">Blue</option>
+            <option value="green">Green</option>
+        </select>
+    </body>
+</html>
+

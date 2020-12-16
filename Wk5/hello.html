@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <title>Hello</title>
+        <script>
+            // function that takes zero arguments
+            // code that needs to be run inside curly braces
+            function hello() {
+                
+                // manipulate code
+
+                // strict equality, same type included
+                // == check values are same, even through different types like numbers
+                
+                // query selector finds the entire page
+                // const never changes
+                const heading = document.querySelector('h1')
+                if (heading.innerHTML === 'Hello!') {
+                    heading.innerHTML="Goodbye!";
+                } else {
+                    heading.innerHTML="Hello!";
+                }
+                
+                // only finds first element and return query element. '.' changes the innerhtml property
+            }
+            
+        </script>
+        
+        <!-- loads when open page, before body 
+        Event driven programming. An event/action causes another event -->
+    </head>
+    <body>
+        <h1>Hello!</h1>
+        <!-- attribute in button, which when click 'onclick handler' when clicked it runs the function -->
+        <button onclick="hello()">Click Here</button>
+    </body>
+</html>

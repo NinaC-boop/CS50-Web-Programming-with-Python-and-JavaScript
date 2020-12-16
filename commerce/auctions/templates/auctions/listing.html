@@ -73,16 +73,24 @@
         <div class="row justify-content-center">
             <div class="col-12">
                 <h2>Comments</h2>
-                {% for comment in listing.comments %}
-                    <p>[{{ comment.timestamp }}] {{ comment.user }}: {{ comment.message }}</p>
-                {% endfor %}
-                <form action="{% url 'add_comment' %}" method="POST">
-                    {% csrf_token %}
-                    <textarea name="new_comment" rows="4" cols="80" style="box-sizing: border-box; width: 100%;" placeholder="Add a new comment here."></textarea>
-                    <input type="hidden" name="listing_id" value="{{ listing.id }}">
-                    <input type="hidden" name="user" value="{{ user }}">
-                    <input type="submit" value="Post">
-                </form>
+                {% if listing.comments %}
+                    {% for comment in listing.comments %}
+                        <p>[{{ comment.timestamp }}] {{ comment.user }}: {{ comment.message }}</p>
+                    {% endfor %}
+                {% else %}
+                    <p>No comments.</p>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    <form action="{% url 'add_comment' %}" method="POST">
+                        {% csrf_token %}
+                        <textarea name="new_comment" rows="4" cols="80" style="box-sizing: border-box; width: 100%;" placeholder="Add a new comment here."></textarea>
+                        <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                        <input type="hidden" name="user" value="{{ user }}">
+                        <input type="submit" value="Post">
+                    </form>
+                {% endif %}
+
             </div>
         </div>
 
