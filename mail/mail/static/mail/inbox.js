@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('#reply').addEventListener('click', reply_email);
     document.querySelector('#archive').addEventListener('click', archive);
     document.querySelector('#unarchive').addEventListener('click', archive);
+    document.querySelector('#compose-form').addEventListener('submit', function() {
+        const recipients = document.querySelector('#compose-recipients').value;
+        const subject = document.querySelector('#compose-subject').value;
+        const body = document.querySelector('#compose-body').value;
+        send_email(recipients, subject, body);
+    });
 
     // By default, load the inbox
     load_mailbox('inbox');
@@ -147,12 +153,12 @@ function compose_email() {
     document.querySelector('#email-view').style.display = 'none';
     document.querySelector('#compose-view').style.display = 'block';
 
-    document.querySelector('#compose-form').onsubmit = function() {
-        const recipients = document.querySelector('#compose-recipients').value;
-        const subject = document.querySelector('#compose-subject').value;
-        const body = document.querySelector('#compose-body').value;
-        send_email(recipients, subject, body);
-    };
+    // document.querySelector('#compose-form').onsubmit = function() {
+    //     const recipients = document.querySelector('#compose-recipients').value;
+    //     const subject = document.querySelector('#compose-subject').value;
+    //     const body = document.querySelector('#compose-body').value;
+    //     send_email(recipients, subject, body);
+    // };
     
 
     // Clear out composition fields
@@ -200,10 +206,10 @@ function add_email_item(email) {
 
     if (email.read == true) {
         email_item.className = "row border border-primary email-item rounded bg-light text-dark";
-        email_item.innerHTML = `<div class="col-3" data-id=${email.id}><p>${email.sender}</p></div><div class="col" data-id=${email.id}><p>${email.subject}</p><p>${body}</p><p>${email.timestamp}</p></div>`;
+        email_item.innerHTML = `<div class="col-3" data-id=${email.id}><p>${email.sender}</p></div><div class="col-9" data-id=${email.id}><p>${email.subject}</p><p>${body}</p><p>${email.timestamp}</p></div>`;
     } else {
         email_item.className = "row border border-primary email-item rounded";
-        email_item.innerHTML = `<div class="col-3" data-id=${email.id}><h5>${email.sender}</h5></div><div class="col" data-id=${email.id}><h5>${email.subject}</h5><p>${body}</p><p>${email.timestamp}</p></div>`;
+        email_item.innerHTML = `<div class="col-3" data-id=${email.id}><h5>${email.sender}</h5></div><div class="col-9" data-id=${email.id}><h5>${email.subject}</h5><p>${body}</p><p>${email.timestamp}</p></div>`;
     }
 
     // Add post to DOM
