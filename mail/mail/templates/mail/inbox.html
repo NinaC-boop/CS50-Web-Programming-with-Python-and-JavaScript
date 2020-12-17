@@ -11,6 +11,19 @@
     <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
     <hr>
 
+    <div id="email-view" class="container email-item rounded border border-primary" style="padding:20px;">
+        <div id="email-subject"></div>
+        <div id="email-addresses"></div>
+        <div id="email-body"></div>
+        <div id="email-timestamp" class="text-right"></div>
+        <div id="email-reply" class="text-right">
+            <button class="btn btn-sm btn-outline-primary" id="archive">Archive</button>
+            <button class="btn btn-sm btn-outline-primary" id="unarchive">Unarchive</button>
+            <button class="btn btn-sm btn-outline-primary" id="reply">Reply</button>
+            
+        </div>
+    </div>
+
     <div id="emails-view">
         <div id="emails-view-heading"></div>
         <div id="emails-view-gallery" class="container"></div>

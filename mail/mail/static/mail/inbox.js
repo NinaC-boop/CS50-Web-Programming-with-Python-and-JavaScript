@@ -3,15 +3,85 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     // Use buttons to toggle between views
+    // note: use event listeners and setattributes, not hardcode onclick
     document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
     document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
     document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
     document.querySelector('#compose').addEventListener('click', compose_email);
+    document.querySelector('#reply').addEventListener('click', reply_email);
+    document.querySelector('#archive').addEventListener('click', archive);
+    document.querySelector('#unarchive').addEventListener('click', archive);
 
     // By default, load the inbox
     load_mailbox('inbox');
 });
 
+function archive() {
+    if (this.id == "archive") {
+        mark_archived(this.dataset.id, true);
+    } else {
+        mark_archived(this.dataset.id, false);
+    }
+    
+}
+
+function mark_archived(id, bool) {
+    if (bool) {
+        console.log("marked archived");
+    } else {
+        console.log("marked unarchived");
+    }
+    
+    fetch(`/emails/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            archived: bool
+        })
+    }).then(response => {
+        load_mailbox('inbox');
+    })
+}
+
+
+function reply_email() {
+    console.log(this.dataset.id);
+    compose_email();
+    document.querySelector('#compose-recipients').value = this.dataset.sender;
+
+    if (this.dataset.subject.substring(0,4) == "Re: ") {
+        document.querySelector('#compose-subject').value = this.dataset.subject;
+    } else {
+        document.querySelector('#compose-subject').value = "Re: " + this.dataset.subject;
+    }
+    
+
+    document.querySelector('#compose-body').value = `On ${this.dataset.timestamp} ${this.dataset.sender} wrote: ${this.dataset.body}`;
+}
+
+
+function load_email(id) { // mailbox: inbox, send, archive
+
+    
+
+    // Show the mailbox and hide other views
+    document.querySelector('#email-view').style.display = 'block';
+    document.querySelector('#compose-view').style.display = 'none';
+    document.querySelector('#emails-view').style.display = 'none';
+    show_email(id);
+
+}
+
+// {
+//     "id": 100,
+//     "sender": "foo@example.com",
+//     "recipients": ["bar@example.com"],
+//     "subject": "Hello!",
+//     "body": "Hello, world!",
+//     "timestamp": "Jan 2 2020, 12:00 AM",
+//     "read": false,
+//     "archived": false
+// }
+// email’s sender, recipients, subject, timestamp, and body.
 function show_email(id) {
     fetch(`/emails/${id}`)
     .then(response => response.json())
@@ -19,10 +89,33 @@ function show_email(id) {
         // Print email
         console.log(email);
     
-        document.querySelector('#emails-view-heading').innerHTML = `<h3>${email.subject}</h3>`;
-        document.querySelector('#emails-view-gallery').innerHTML = `<p>${email.body}</p>`;
+        var recipients = "";
+        for (i = 0, len = email.recipients.length; i < len; i++) {
+            if (i != 0 && i != len) {
+                recipients += ', ';
+            }
+            recipients += email.recipients[i];
+        }
+
+        document.querySelector('#email-subject').innerHTML = `<h3>${email.subject}</h3>`;
+        document.querySelector('#email-addresses').innerHTML = `<p><small>From: ${email.sender}</small><br><small>To: ${recipients}</small></p>`;
+        document.querySelector('#email-body').innerHTML = `<p>${email.body}</p>`;
+        document.querySelector('#email-timestamp').innerHTML = `<p><small>Sent ${email.timestamp}</small></p>`;
+
+        // data of original email
+        document.querySelector('#reply').setAttribute("data-id", `${id}`);
+        document.querySelector('#reply').setAttribute("data-sender", `${email.sender}`);
+        document.querySelector('#reply').setAttribute("data-recipients", `${recipients}`);
+        document.querySelector('#reply').setAttribute("data-subject", `${email.subject}`);
+        document.querySelector('#reply').setAttribute("data-body", `${email.body}`);
+        document.querySelector('#reply').setAttribute("data-timestamp", `${email.timestamp}`);
+
+        document.querySelector('#archive').setAttribute("data-id", `${id}`);
+        document.querySelector('#unarchive').setAttribute("data-id", `${id}`);
+
     });
 }
+
 
 function send_email(recipients, subject, body) {
     // Send Mail: When a user submits the email composition form, add JavaScript code to actually send the email.
@@ -40,6 +133,8 @@ function send_email(recipients, subject, body) {
     .then(result => {
         // Print result
         console.log(result);
+        console.log("returning to sent");
+        load_mailbox('sent');
     });
 
 }
@@ -49,6 +144,7 @@ function compose_email() {
 
     // Show compose view and hide other views
     document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#email-view').style.display = 'none';
     document.querySelector('#compose-view').style.display = 'block';
 
     document.querySelector('#compose-form').onsubmit = function() {
@@ -56,7 +152,6 @@ function compose_email() {
         const subject = document.querySelector('#compose-subject').value;
         const body = document.querySelector('#compose-body').value;
         send_email(recipients, subject, body);
-        load_mailbox('sent');
     };
     
 
@@ -66,8 +161,8 @@ function compose_email() {
     document.querySelector('#compose-body').value = '';
 }
 
-function mark_sent(id) {
-    console.log("marked sent")
+function mark_read(id) {
+    console.log("marked read")
     fetch(`/emails/${id}`, {
         method: 'PUT',
         body: JSON.stringify({
@@ -75,6 +170,8 @@ function mark_sent(id) {
         })
     })
 }
+
+
 
 // gets a single dict of email and adds onto dom
 // {
@@ -92,7 +189,7 @@ function add_email_item(email) {
     // Create new email_item
     const email_item = document.createElement('div');
     // note: wrap onclick on div to make it all work
-    email_item.setAttribute("onclick", `show_email(${email.id}); mark_sent(${email.id});`);
+    email_item.setAttribute("onclick", `load_email(${email.id}); mark_read(${email.id});`);
 
     var body = email.body;
     if (body.length > 200) {
@@ -108,7 +205,7 @@ function add_email_item(email) {
         email_item.className = "row border border-primary email-item rounded";
         email_item.innerHTML = `<div class="col-3" data-id=${email.id}><h5>${email.sender}</h5></div><div class="col" data-id=${email.id}><h5>${email.subject}</h5><p>${body}</p><p>${email.timestamp}</p></div>`;
     }
-    
+
     // Add post to DOM
     document.querySelector('#emails-view-gallery').append(email_item);
 };
@@ -124,7 +221,6 @@ function show_emails(mailbox) {
             for (i = 0, len = emails.length; i < len; i++) {
                 add_email_item(emails[i]);
             }
-            // document.querySelector('#emails-view-gallery').innerHTML = text;
         }
     });
 }
@@ -133,12 +229,21 @@ function load_mailbox(mailbox) { // mailbox: inbox, send, archive
 
     console.log("received");
 
-    
-    
-
     // Show the mailbox and hide other views
     document.querySelector('#emails-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
+    document.querySelector('#email-view').style.display = 'none';
+
+    if (mailbox == "inbox") {
+        document.querySelector('#archive').style.display = 'inline-block';
+        document.querySelector('#unarchive').style.display = 'none';
+    } else if (mailbox == "sent") {
+        document.querySelector('#archive').style.display = 'none';
+        document.querySelector('#unarchive').style.display = 'none';
+    } else {
+        document.querySelector('#archive').style.display = 'none';
+        document.querySelector('#unarchive').style.display = 'inline-block';
+    }
 
 
     // note: changing innerhtml also can reset all text within
