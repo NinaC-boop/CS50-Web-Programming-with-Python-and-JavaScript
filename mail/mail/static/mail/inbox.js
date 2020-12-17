@@ -11,12 +11,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('#reply').addEventListener('click', reply_email);
     document.querySelector('#archive').addEventListener('click', archive);
     document.querySelector('#unarchive').addEventListener('click', archive);
-    document.querySelector('#compose-form').addEventListener('submit', function() {
-        const recipients = document.querySelector('#compose-recipients').value;
-        const subject = document.querySelector('#compose-subject').value;
-        const body = document.querySelector('#compose-body').value;
-        send_email(recipients, subject, body);
-    });
+    // document.querySelector('#compose-form').addEventListener('submit', function() {
+    //     const recipients = document.querySelector('#compose-recipients').value;
+    //     const subject = document.querySelector('#compose-subject').value;
+    //     const body = document.querySelector('#compose-body').value;
+    //     send_email(recipients, subject, body);
+    //     return false;
+    // });
 
     // By default, load the inbox
     load_mailbox('inbox');
@@ -153,12 +154,14 @@ function compose_email() {
     document.querySelector('#email-view').style.display = 'none';
     document.querySelector('#compose-view').style.display = 'block';
 
-    // document.querySelector('#compose-form').onsubmit = function() {
-    //     const recipients = document.querySelector('#compose-recipients').value;
-    //     const subject = document.querySelector('#compose-subject').value;
-    //     const body = document.querySelector('#compose-body').value;
-    //     send_email(recipients, subject, body);
-    // };
+    // note: remember to disable submit functions so that it doesn't reload the page.
+    document.querySelector('#compose-form').onsubmit = function() {
+        const recipients = document.querySelector('#compose-recipients').value;
+        const subject = document.querySelector('#compose-subject').value;
+        const body = document.querySelector('#compose-body').value;
+        send_email(recipients, subject, body);
+        return false;
+    };
     
 
     // Clear out composition fields
