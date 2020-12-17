@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // LOAD MAILBOXES
 // loads mailbox displays: inbox, send, archive
 function load_mailbox(mailbox) { 
-    
+
     // Show the mailbox and hide other views
     document.querySelector('#emails-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
@@ -198,7 +198,6 @@ function reply_email() {
     } else {
         document.querySelector('#compose-subject').value = "Re: " + this.dataset.subject;
     }
-    
 
     document.querySelector('#compose-body').value = `On ${this.dataset.timestamp} ${this.dataset.sender} wrote: ${this.dataset.body}`;
 }
